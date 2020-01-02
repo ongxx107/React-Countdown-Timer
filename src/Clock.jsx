@@ -12,33 +12,44 @@ class Clock extends Component {
     }
   }
 
-  // componentWillMount() {
-  //   this.getTimeUntil(this.props.deadline);
-  // }
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      let date = this.getTimeUntil(this.props.deadline);
+      date ? this.setState(date) : this.stop();
+    }, 1000);
+  }
 
-  componentWillReceiveProps(props) {
-    this.getTimeUntil(this.props.deadline);
+  componentWillUnmount() {
+    this.stop();
+  }
+
+  leading0(num) {
+    return num < 10 ? '0' + num : num;
   }
 
   getTimeUntil(deadline) {
     const time = Date.parse(deadline) - Date.parse(new Date());
-    console.log('time', time);
     const seconds = Math.floor((time/1000) % 60);
     const minutes = Math.floor((time/1000/60) % 60);
     const hours = Math.floor((time/1000/60/60) % 24);
     const days = Math.floor(time/1000/60/60/24);
 
-    console.log('seconds', seconds, 'minutes', minutes, 'hours', hours, 'days', days);
-    this.setState({days: days});
+    let date = {
+      days,
+      hours,
+      minutes,
+      seconds
+    };
+    return date;
   }
 
   render() {
     return (
       <div>
-        <div className = 'ClockDays'>{this.state.days} days</div>
-        <div className = 'ClockHours'>{this.state.hours} hours</div>
-        <div className = 'ClockMinutes'>{this.state.minutes} minutes</div>
-        <div className = 'ClockSeconds'>{this.state.seconds} seconds</div>
+        <div className = 'ClockDays'>{this.leading0(this.state.days)} days</div>
+        <div className = 'ClockHours'>{this.leading0(this.state.hours)} hours</div>
+        <div className = 'ClockMinutes'>{this.leading0(this.state.minutes)} minutes</div>
+        <div className = 'ClockSeconds'>{this.leading0(this.state.seconds)} seconds</div>
       </div>
     )
   }
